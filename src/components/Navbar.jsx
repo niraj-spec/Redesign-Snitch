@@ -218,13 +218,6 @@ const Navbar = () => {
   title={user ? (isPlaying ? 'Pause Music' : 'Play Music') : 'Login to play music'}
 >
   {isPlaying ? <FaPause size={20} /> : <FaPlay size={20} />}
-  {isPlaying && (
-    <span className="flex items-end">
-      {[0, 1, 2, 3].map(i => (
-        <span key={i} style={{ ...barStyle, ...barStyleDelays[i] }} />
-      ))}
-    </span>
-  )}
 </button>
 
 
