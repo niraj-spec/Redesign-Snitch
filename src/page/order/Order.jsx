@@ -1,4 +1,3 @@
-// src/pages/Order.jsx
 import React, { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { collection, getDocs, query, where } from "firebase/firestore";
@@ -69,15 +68,18 @@ const Order = () => {
                   {order.items.map((item, index) => (
                     <div key={index} className="flex items-center py-2">
                       <img src={item.image} alt={item.title} className="w-12 h-12 rounded border mr-4 object-cover" />
-                      <div className="flex-1">
-                        <p className="font-medium">{item.title}</p>
-                        <p className="text-xs text-gray-500">₹{item.price} × {item.quantity} <div className="text-xs text-gray-500">
+                      <div className="flex flex-col flex-1 min-w-0">
+                        <p className="font-medium truncate">{item.title}</p>
+                        <div className="text-xs text-gray-500 flex flex-wrap gap-2">
+                          <span>₹{item.price} × {item.quantity}</span>
                           {item.size && (
-                            <span className=" text-gray-600">Size: <strong>{item.size}</strong></span>
+                            <span className="text-gray-600">Size: <strong>{item.size}</strong></span>
                           )}
-                        </div></p>
+                        </div>
                       </div>
-                      <div className="font-semibold">₹{(item.price * item.quantity).toFixed(2)}</div>
+                      <div className="font-semibold ml-4 whitespace-nowrap">
+                        ₹{(item.price * item.quantity).toFixed(2)}
+                      </div>
                     </div>
                   ))}
                 </div>

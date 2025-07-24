@@ -55,7 +55,9 @@ const OrderDetail = () => {
         <section className="min-h-screen p-6 bg-gray-100">
             <div className="max-w-3xl mx-auto bg-white p-6 rounded shadow">
                 <h1 className="text-2xl font-bold mb-2">📦 Order Details</h1>
-                <p className="text-sm text-gray-500 mb-4">Order ID: <code>{id}</code></p>
+                <p className="text-sm text-gray-500 mb-4">
+                    Order ID: <code className="break-all">{id}</code>
+                </p>
 
                 {/* Shipping Info */}
                 <div className="mb-4 bg-gray-50 p-4 border rounded text-sm">
@@ -72,11 +74,12 @@ const OrderDetail = () => {
                             <img src={item.image} alt={item.title} className="w-14 h-14 rounded border mr-4" />
                             <div className="flex-1 text-sm">
                                 <p className="font-semibold">{item.title}</p>
-                                <p className="text-gray-500 text-xs">₹{item.price} × {item.quantity} <div className="text-xs text-gray-500">
-                                    {item.size && (
-                                        <span className=" text-gray-600">Size: <strong>{item.size}</strong></span>
-                                    )}
-                                </div></p>
+                                <div className="text-gray-500 text-xs">₹{item.price} × {item.quantity}
+                                    <div className="text-xs text-gray-500">
+                                        {item.size && (
+                                            <span className=" text-gray-600">Size: <strong>{item.size}</strong></span>)}
+                                    </div>
+                                    </div>
                             </div>
                             <div className="text-sm font-bold">₹{(item.price * item.quantity).toFixed(2)}</div>
                         </div>

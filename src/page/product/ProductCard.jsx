@@ -1,9 +1,9 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { FaShoppingCart, FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
-import { useDispatch } from 'react-redux';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { FaShoppingCart, FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
+import { useDispatch } from "react-redux";
 
-// Utility to render rating stars (full, half, empty)
+// Utility to render rating stars
 const renderStars = (rating = 0) => {
   const stars = [];
   for (let i = 1; i <= 5; i++) {
@@ -18,7 +18,7 @@ const renderStars = (rating = 0) => {
   return stars;
 };
 
-// Price calculation
+// Calculate final price considering discount
 const calculateFinalPrice = (product) => {
   const original = parseFloat(product.originalPrice || product.price);
   const discount = parseFloat(product.discountPercent || 0);
@@ -33,6 +33,7 @@ const calculateFinalPrice = (product) => {
 
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
+  const [showSecondImage, setShowSecondImage] = useState(false);
 
   const handleAddToCart = async () => {
     // Your add-to-cart dispatch or logic
@@ -42,7 +43,7 @@ const ProductCard = ({ product }) => {
   const firstImage =
     Array.isArray(product.images) && product.images.length > 0
       ? product.images[0]
-      : product.image || '/api/placeholder/300x400';
+      : product.image || "/api/placeholder/300x400";
 
   const secondImage =
     Array.isArray(product.images) && product.images.length > 1
@@ -50,29 +51,35 @@ const ProductCard = ({ product }) => {
       : null;
 
   const showDiscount = product.discountPercent > 0;
-
   const finalPrice = calculateFinalPrice(product);
-
   const rating = parseFloat(product.rating?.rate || 0);
+
+  // Toggle image on mobile tap
+  const handleImageToggle = () => {
+    if (secondImage) setShowSecondImage((prev) => !prev);
+  };
 
   return (
     <motion.div
       whileHover={{ scale: 1.02 }}
-      className="group cursor-pointer rounded-lg overflow-hidden bg-white border border-gray-200"
+      className="group cursor-pointer rounded-lg overflow-hidden bg-white border border-gray-200 shadow-sm"
+      onClick={handleImageToggle}
+      // Prevent toggling on desktop, only on touch devices - optional improvement
+      onTouchStart={() => {}} // Dummy to enable :active styles on iOS Safari
     >
       {/* Product Images */}
-      <div className="relative overflow-hidden h-64 w-full">
+      <div className="relative overflow-hidden h-64 w-full rounded-t-lg">
         <img
-          src={firstImage}
+          src={showSecondImage && secondImage ? secondImage : firstImage}
           alt={product.title}
-          className="absolute w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
+          className="absolute w-full h-full object-cover transition-opacity duration-300"
         />
-        {/* Second image on hover (if available) */}
-        {secondImage && (
+        {/* Desktop hover second image overlay */}
+        {secondImage && !showSecondImage && (
           <img
             src={secondImage}
-            alt="Alt View"
-            className="absolute w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            alt={`${product.title} alternate view`}
+            className="absolute w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
           />
         )}
 
@@ -80,8 +87,12 @@ const ProductCard = ({ product }) => {
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          onClick={handleAddToCart}
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent toggling image on cart button click
+            handleAddToCart();
+          }}
           className="absolute bottom-4 right-4 bg-white p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition duration-300"
+          aria-label="Add to Cart"
         >
           <FaShoppingCart className="w-4 h-4 text-gray-800" />
         </motion.button>
@@ -98,12 +109,19 @@ const ProductCard = ({ product }) => {
         </div>
 
         {/* Pricing */}
-        <div className="flex items-center gap-2 text-sm font-medium pt-1">
+        <div className="flex flex-wrap items-center gap-2 text-sm font-medium pt-1">
+          {/* Price */}
           <span className="text-gray-900 font-bold">₹{finalPrice}</span>
+
+          {/* Original price if discount */}
           {showDiscount && (
             <>
               <span className="line-through text-gray-400">₹{product.originalPrice}</span>
-              <span className="text-green-600 font-semibold">{product.discountPercent}% off</span>
+
+              {/* Discount badge with padding/margin to avoid sticking to right */}
+              <span className="text-green-600 font-semibold pr-2">
+                {product.discountPercent}% off
+              </span>
             </>
           )}
         </div>

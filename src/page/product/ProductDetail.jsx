@@ -84,7 +84,6 @@ export default function ProductDetail() {
       return;
     }
 
-
     try {
       const userRef = doc(db, 'users', currUser.uid);
       const userSnap = await getDoc(userRef);
@@ -92,7 +91,7 @@ export default function ProductDetail() {
       const image =
         Array.isArray(product.images) && product.images.length > 0
           ? product.images[0]
-          : product.image || '/placeholder.png';
+          : product.image ;
 
       const price =
         typeof product.finalPrice !== 'undefined' && product.finalPrice !== null
@@ -224,7 +223,7 @@ export default function ProductDetail() {
   const productImage =
     Array.isArray(product.images) && product.images.length > 0
       ? product.images[0]
-      : product.image || '/placeholder.png';
+      : product.image ;
 
   const displayPrice =
     product.finalPrice !== undefined && product.finalPrice !== null
@@ -281,7 +280,7 @@ export default function ProductDetail() {
   </div>
 ) : (
   <img
-    src={product.image || "/placeholder.png"}
+    src={product.image}
     alt={product.title}
     className="w-full h-96 object-cover rounded"
   />
@@ -473,6 +472,7 @@ export default function ProductDetail() {
               ))}
           </ul>
         )}
+        
       </div>
     </section>
   );

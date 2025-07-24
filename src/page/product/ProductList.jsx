@@ -22,6 +22,8 @@ const renderStars = (rating = 0) => {
   return stars;
 };
 
+
+
 const calculateFinalPrice = (product) => {
   const original = parseFloat(product.originalPrice || product.price || 0);
   const discount = parseFloat(product.discountPercent || 0);
@@ -44,6 +46,8 @@ const ProductList = () => {
   const [selectedPrice, setSelectedPrice] = useState(null);
   const [selectedRating, setSelectedRating] = useState(0);
   const [selectedDiscount, setSelectedDiscount] = useState(0);
+  const [activeCard, setActiveCard] = useState(null);
+
 
   const observerRef = useRef();
 
@@ -149,6 +153,10 @@ const ProductList = () => {
     );
   }
 
+  const handleCardToggle = (productId) => {
+    setActiveCard((prev) => (prev === productId ? null : productId));
+  };
+
   return (
     <section className="py-8 bg-white min-h-screen">
       <div className="max-w-7xl mx-auto px-4">
@@ -156,16 +164,15 @@ const ProductList = () => {
           {/* Sidebar */}
           <div className="md:w-1/4 mb-6 md:mb-0">
             <ProductFilter
-  selectedCategory={selectedCategory}
-  selectedPrice={selectedPrice}
-  selectedRating={selectedRating}
-  selectedDiscount={selectedDiscount}
-  setSelectedCategory={setSelectedCategory}
-  setSelectedPrice={setSelectedPrice}
-  setSelectedRating={setSelectedRating}
-  setSelectedDiscount={setSelectedDiscount}
-/>
-
+              selectedCategory={selectedCategory}
+              selectedPrice={selectedPrice}
+              selectedRating={selectedRating}
+              selectedDiscount={selectedDiscount}
+              setSelectedCategory={setSelectedCategory}
+              setSelectedPrice={setSelectedPrice}
+              setSelectedRating={setSelectedRating}
+              setSelectedDiscount={setSelectedDiscount}
+            />
           </div>
 
           {/* Product Grid */}
@@ -203,6 +210,9 @@ const ProductList = () => {
                     const rating = parseFloat(product.averageRating || product.rating?.rate || 0);
                     const isLastItem = displayedProducts.length === index + 1;
 
+                    // Determine which image to show (mobile toggle or desktop hover)
+                    // On desktop: show second image on hover via CSS
+                    // On mobile: show second image if activeCard matches product id
                     return (
                       <motion.div
                         key={product.id}
@@ -210,20 +220,29 @@ const ProductList = () => {
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.05 }}
-                        className="bg-white border rounded-lg shadow hover:shadow-lg transition"
+                        className="bg-white border rounded-lg shadow hover:shadow-lg transition cursor-pointer"
+                        onClick={() => {
+                          if (secondImage) {
+                            handleCardToggle(product.id);
+                          }
+                        }}
                       >
-                        <Link to={`/product/${product.id}`}>
-                          <div className="relative h-56 overflow-hidden">
+                        <Link to={`/product/${product.id}`} onClick={(e) => e.stopPropagation()}>
+                          <div className="relative h-56 overflow-hidden rounded-t-lg">
                             <img
-                              src={firstImage || "/placeholder.png"}
+                              src={
+                                // Show second image on desktop hover or on mobile active
+                                (activeCard === product.id && secondImage) ? secondImage : firstImage || "/placeholder.png"
+                              }
                               alt={product.title}
-                              className="absolute w-full h-full object-cover"
+                              className="absolute w-full h-full object-cover transition-opacity duration-300"
                             />
+                            {/* Desktop hover effect: layered images */}
                             {secondImage && (
                               <img
                                 src={secondImage}
                                 alt={product.title + " extra"}
-                                className="absolute w-full h-full object-cover opacity-0 hover:opacity-100 transition-opacity"
+                                className={`absolute w-full h-full object-cover opacity-0 hover:opacity-100 md:block hidden transition-opacity duration-300`}
                               />
                             )}
                           </div>
@@ -255,6 +274,7 @@ const ProductList = () => {
                         </Link>
                       </motion.div>
                     );
+                    
                   })}
                 </motion.div>
               </>

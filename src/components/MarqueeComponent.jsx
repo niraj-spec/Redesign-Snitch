@@ -1,8 +1,10 @@
-// MarqueeLetters.jsx
 import React, { useState } from 'react';
 import Marquee from 'react-fast-marquee';
 
-const letters = 'ORDERS SHIP WITHIN 24 HOURS //FREE 7DAY RETURNS //MADE IN INDIA FOR THE WORLD //Flat 16% Off on purchases above 4490 //'.split('');
+const messages = 'ORDERS SHIP WITHIN 24 HOURS 🚀 //FREE 7DAY RETURNS 🏃 //MADE IN INDIA FOR THE WORLD 🌍 //Flat 16% Off on purchases above 4490 🏃 //'
+  .split('//')
+  .map(msg => msg.trim())  // trim to remove leading/trailing spaces
+  .filter(Boolean);        // remove empty strings if any
 
 export default function MarqueeLetters() {
   const [selectedIdx, setSelectedIdx] = useState(null);
@@ -15,23 +17,22 @@ export default function MarqueeLetters() {
         gradient={false}
         className="select-none"
       >
-        {letters.map((char, idx) => (
+        {messages.map((msg, idx) => (
           <span
-            key={`${char}-${idx}`}
+            key={`${msg}-${idx}`}
             onClick={() => setSelectedIdx(idx)}
             className={`
-              mx-2 px-1 text-2xl font-semibold cursor-pointer
-              transition-colors duration-200 ease-in-out
+              mx-4 px-3 text-2xl font-semibold cursor-pointer whitespace-nowrap
+              transition-colors duration-200 ease-in-out rounded
               ${selectedIdx === idx
                 ? 'bg-white text-black'
                 : 'bg-transparent text-gray-800 hover:bg-gray-200 hover:text-black'}
             `}
           >
-            {char}
+            {msg}
           </span>
         ))}
       </Marquee>
     </div>
   );
 }
-
