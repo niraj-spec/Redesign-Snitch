@@ -1,12 +1,112 @@
-# React + Vite
+# Redesign-Snitch
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, responsive redesign of the Snitch men's fashion e-commerce site, built with ReactJS and Tailwind CSS. This project focuses on clean user experience, modular architecture, and micro-interactions suitable for web and mobile devices.
 
-Currently, two official plugins are available:
+## 🚀 Demo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+[Live Demo](https://snitch-redesign.netlify.app/)
 
-## Expanding the ESLint configuration
+## ✨ Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- **Responsive UI**: Looks great on desktop, tablet, and mobile
+- **Tailwind CSS**: Fast, utility-first styling
+- **Reusable Components**: Modular product cards, navigation, and layouts
+- **Product Listing**: Simple interface to view products and categories
+- **Modern UX Patterns**: Hover/focus states, transitions, loading spinners
+- **Accessible Design**: Semantic HTML, keyboard navigation, and alt texts
+- **Demo Only**: No real transactions or personal data storage
+
+## 📂 Project Structure
+
+```
+/public              # Static assets
+/src
+  /components        # Reusable UI parts
+  /pages             # Main pages (Home, Products, About, etc.)
+  /assets            # Images, icons, mock product data
+  /utils             # Helpers, config
+  /hooks             # Custom React hooks
+  App.jsx            # Root application file
+  index.js           # Entry point
+tailwind.config.js   # Tailwind configuration
+postcss.config.js    # PostCSS configuration
+README.md            # Project documentation
+```
+
+## 🛠️ Tech Stack
+
+- **Frontend:** ReactJS, Tailwind CSS
+- **Routing:** React Router (optional)
+- **State Management:** React Hooks, Context API (if needed)
+- **Icons/UI:** Heroicons or similar
+
+## 🖼️ Screenshots
+
+| Home Page                        | Product List                      |
+|----------------------------------|-----------------------------------|
+|  |  |
+
+## 🚧 Getting Started
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/niraj-spec/Redesign-Snitch.git
+cd Redesign-Snitch
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+# or
+yarn install
+```
+
+### 3. Run Locally
+
+```bash
+npm start
+# or
+yarn start
+```
+
+App will run at `http://localhost:3000`.
+
+## ⚙️ Customization
+
+- Add/update products in `/src/assets/products.json` or mock data files.
+- Change branding, theme colors in `tailwind.config.js`.
+
+## 📋 Folder Details
+
+| Folder/File    | Purpose                                 |
+|----------------|-----------------------------------------|
+| /components    | Buttons, navbars, product cards         |
+| /pages         | Home, Products, Product Details, About  |
+| /assets        | Images, icons, mock product data        |
+| /utils         | Helper functions, utilities             |
+| /hooks         | Shared custom React hooks               |
+
+## 🤝 Contribute
+
+Want to add features, fix bugs, or improve the site?
+
+1. Fork this repo
+2. Create your branch: `git checkout -b feature/awesome-feature`
+3. Commit changes: `git commit -am 'Add new feature'`
+4. Push: `git push origin feature/awesome-feature`
+5. Open a pull request
+
+## 📢 Credits
+
+- [Tailwind CSS Docs](https://tailwindcss.com/docs)
+- [ReactJS Official](https://reactjs.org/)
+- UI inspired by [snitch.co.in](https://www.snitch.co.in/) (no affiliation)
+
+## 📝 License
+
+MIT – open source for learning and demo purposes.
+
+---
+**Made with ❤️ by [niraj-spec](https://github.com/niraj-spec)**
