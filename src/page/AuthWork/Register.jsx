@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { collection, addDoc } from 'firebase/firestore';
-import { auth, db } from '../../firebase/FirebaseConfig'; // ✅ import auth too
+import { auth, db } from '../../firebase/FirebaseConfig';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
