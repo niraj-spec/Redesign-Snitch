@@ -42,7 +42,7 @@ const HeroSection = () => {
     };
 
     const handleRedirect = (filter) => {
-        navigate(`/products?category=${filter}`);
+        navigate(`/product?category=${filter}`);
     };
 
     return (

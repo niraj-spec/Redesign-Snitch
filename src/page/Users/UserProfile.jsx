@@ -74,7 +74,7 @@ const UserProfile = () => {
 
             <div className="grid grid-cols-3 gap-3 w-full mt-3">
               <Link
-                to="/home"
+                to="/"
                 className="flex flex-col items-center text-indigo-700 hover:text-indigo-400"
               >
                 <FaHome size={22} />
@@ -88,7 +88,7 @@ const UserProfile = () => {
                 <span className="text-xs mt-1 font-medium">Cart</span>
               </Link>
               <Link
-                to="/products"
+                to="/product"
                 className="flex flex-col items-center text-indigo-600 hover:text-indigo-400"
               >
                 <FaBoxOpen size={22} />

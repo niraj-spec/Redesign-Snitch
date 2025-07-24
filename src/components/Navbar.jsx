@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -6,7 +6,9 @@ import {
   FaSearch,
   FaBars,
   FaTimes,
-  FaCommentAlt
+  FaCommentAlt,
+  FaPlay,
+  FaPause
 } from 'react-icons/fa';
 import {
   onAuthStateChanged,
@@ -32,6 +34,8 @@ const Navbar = () => {
   const [allProducts, setAllProducts] = useState([]);
   const [showMessages, setShowMessages] = useState(false);
   const [messages, setMessages] = useState([]);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef(null);
 
   const navigate = useNavigate();
 
@@ -114,6 +118,67 @@ const Navbar = () => {
     setadmin(false);
   };
 
+  useEffect(() => {
+    // Use a sample flute music URL (ensure it's royalty-free or your own)
+    audioRef.current = new Audio('/song.mp3');
+    audioRef.current.loop = true;
+
+    // Clean up on unmount
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
+  const togglePlay = () => {
+    if (!user) {
+      alert('Please login to play music.');
+      return;
+    }
+
+    if (!audioRef.current) return;
+
+    if (isPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play();
+    }
+
+    setIsPlaying(!isPlaying);
+  };
+
+  // When audio ends naturally, update isPlaying state
+  useEffect(() => {
+    if (!audioRef.current) return;
+
+    const onEnded = () => setIsPlaying(false);
+    audioRef.current.addEventListener('ended', onEnded);
+
+    return () => {
+      audioRef.current?.removeEventListener('ended', onEnded);
+    };
+  }, []);
+
+  // Bar animation styles
+  const barStyle = {
+    width: '4px',
+    height: '20px',
+    margin: '0 2px',
+    backgroundColor: 'green',
+    display: 'inline-block',
+    animation: 'barMove 1s infinite',
+    animationTimingFunction: 'ease-in-out',
+  };
+
+  const barStyleDelays = [
+    { animationDelay: '0s' },
+    { animationDelay: '0.2s' },
+    { animationDelay: '0.4s' },
+    { animationDelay: '0.6s' },
+  ];
+
   return (
     <>
       <nav className="bg-white shadow-sm sticky top-0 z-50 transition-all duration-300">
@@ -142,8 +207,29 @@ const Navbar = () => {
 
               {!user && (
                 <Link to="/login" className="text-blue-600 font-semibold hover:underline">Login</Link>
-              ) }
+              )}
             </div>
+
+            {/* Add Music Play Button on right side */}
+            <div className="flex items-center space-x-3 ml-4">
+              <button
+  onClick={togglePlay}
+  className="p-2 rounded-md bg-green-100 hover:bg-green-200 text-green-800 flex items-center space-x-2"
+  title={user ? (isPlaying ? 'Pause Music' : 'Play Music') : 'Login to play music'}
+>
+  {isPlaying ? <FaPause size={20} /> : <FaPlay size={20} />}
+  {isPlaying && (
+    <span className="flex items-end">
+      {[0, 1, 2, 3].map(i => (
+        <span key={i} style={{ ...barStyle, ...barStyleDelays[i] }} />
+      ))}
+    </span>
+  )}
+</button>
+
+
+            </div>
+
 
             {/* Right icons */}
             <div className="flex space-x-4 items-center">
@@ -232,10 +318,10 @@ const Navbar = () => {
             )}
 
             {!user && (
-  <Link to="/login" className="text-blue-600 font-semibold hover:underline">
-    Login
-  </Link>
-)}
+              <Link to="/login" className="text-blue-600 font-semibold hover:underline">
+                Login
+              </Link>
+            )}
 
           </div>
         </motion.div>
@@ -262,6 +348,7 @@ const Navbar = () => {
           )}
         </div>
       )}
+
     </>
   );
 };
