@@ -69,7 +69,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-100 to-purple-200 px-4">
       {/* 👋 Welcome Image */}
       <img
-        src="https://illustrations.popsy.co/gray/astronaut-light.svg"
+        src="/login.jpg"
         alt="Welcome back"
         className="w-48 md:w-60 mb-6 transition-transform duration-300 hover:scale-105"
       />

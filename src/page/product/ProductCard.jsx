@@ -64,7 +64,6 @@ const ProductCard = ({ product }) => {
       whileHover={{ scale: 1.02 }}
       className="group cursor-pointer rounded-lg overflow-hidden bg-white border border-gray-200 shadow-sm"
       onClick={handleImageToggle}
-      // Prevent toggling on desktop, only on touch devices - optional improvement
       onTouchStart={() => {}} // Dummy to enable :active styles on iOS Safari
     >
       {/* Product Images */}
@@ -100,7 +99,9 @@ const ProductCard = ({ product }) => {
 
       {/* Product Info */}
       <div className="p-4 space-y-1">
-        <h3 className="text-sm uppercase font-semibold text-gray-900 truncate">{product.title}</h3>
+        <h3 className="text-sm uppercase font-semibold text-gray-900 truncate">
+          {product.title}
+        </h3>
 
         {/* Rating */}
         <div className="flex items-center text-xs">
@@ -113,13 +114,13 @@ const ProductCard = ({ product }) => {
           {/* Price */}
           <span className="text-gray-900 font-bold">₹{finalPrice}</span>
 
-          {/* Original price if discount */}
+          {/* Original price & Discount badge */}
           {showDiscount && (
             <>
-              <span className="line-through text-gray-400">₹{product.originalPrice}</span>
-
-              {/* Discount badge with padding/margin to avoid sticking to right */}
-              <span className="text-green-600 font-semibold pr-2">
+              <span className="line-through text-gray-400">
+                ₹{product.originalPrice}
+              </span>
+              <span className="text-green-600 font-semibold px-2 rounded bg-green-50 ml-2">
                 {product.discountPercent}% off
               </span>
             </>

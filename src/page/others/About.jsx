@@ -84,7 +84,6 @@ const About = () => (
         </p>
       </motion.div>
     </div>
-    
     {/* Team/Campaign or Image bar - placeholder for further enhancement */}
     <div className="flex justify-center mt-12">
       <motion.div

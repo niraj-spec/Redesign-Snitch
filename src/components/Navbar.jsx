@@ -214,7 +214,7 @@ const Navbar = () => {
             <div className="flex items-center space-x-3 ml-4">
               <button
   onClick={togglePlay}
-  className="p-2 rounded-md bg-green-100 hover:bg-green-200 text-green-800 flex items-center space-x-2"
+  className="p-2 rounded-md flex items-center space-x-2"
   title={user ? (isPlaying ? 'Pause Music' : 'Play Music') : 'Login to play music'}
 >
   {isPlaying ? <FaPause size={20} /> : <FaPlay size={20} />}
@@ -297,7 +297,7 @@ const Navbar = () => {
           className="md:hidden overflow-hidden"
         >
           <div className="px-4 pt-2 pb-4 space-y-2">
-            <Link to="/new" className="block text-gray-700 hover:text-black">NEW</Link>
+            <Link to="/" className="block text-gray-700 hover:text-black">HOME</Link>
             <Link to="/product" className="block text-gray-700 hover:text-black">SHOP</Link>
             <Link to="/about" className="block text-gray-700 hover:text-black">ABOUT</Link>
             <Link to="/studio" className="block text-gray-700 hover:text-black">STUDIO</Link>

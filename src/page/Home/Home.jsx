@@ -11,6 +11,7 @@ import ProductList from '../product/ProductList';
 import BrandStory from './BrandStory';
 import Footer from '../../components/Footer';
 import UserProfile from '../Users/UserProfile';
+import FAQ from '../../components/FAQ';
 
 const Home = () => {
   const [featured, setFeatured] = useState([]);
@@ -86,6 +87,7 @@ const Home = () => {
 
         <BrandStory />
         <UserProfile />
+        <FAQ/>
       </main>
       <Footer />
     </div>

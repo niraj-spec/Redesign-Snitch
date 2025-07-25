@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { doc, getDoc, setDoc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { doc, getDoc, collection, query, where, getDocs, setDoc, updateDoc, arrayUnion, limit } from 'firebase/firestore';
 import { db, auth } from '../../firebase/FirebaseConfig';
 import { FaStar } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import Loader from '../../components/Loader'
+import Loader from '../../components/Loader';
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -24,12 +24,14 @@ export default function ProductDetail() {
   const [selectedSize, setSelectedSize] = useState('');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+  // SUGGESTIONS STATE
+  const [suggestions, setSuggestions] = useState([]);
+  const [loadingSuggestions, setLoadingSuggestions] = useState(true);
 
   // Auth state watcher
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (currUser) => {
       setUser(currUser);
-
       if (currUser) {
         const userRef = doc(db, 'users', currUser.uid);
         const userSnap = await getDoc(userRef);
@@ -38,7 +40,6 @@ export default function ProductDetail() {
         setIsAdmin(false);
       }
     });
-
     return () => unsubscribe();
   }, []);
 
@@ -64,6 +65,38 @@ export default function ProductDetail() {
     fetchProduct();
   }, [id]);
 
+  // FETCH SUGGESTIONS after product loads
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      if (!product || !product.category) {
+        setSuggestions([]);
+        setLoadingSuggestions(false);
+        return;
+      }
+      setLoadingSuggestions(true);
+      try {
+        const q = query(
+          collection(db, 'products'),
+          where('category', '==', product.category),
+          limit(6)
+        );
+        const snap = await getDocs(q);
+        let result = [];
+        snap.forEach(docSnap => {
+          // Avoid own product
+          if (docSnap.id !== id) {
+            result.push({ ...docSnap.data(), id: docSnap.id });
+          }
+        });
+        setSuggestions(result);
+      } catch (err) {
+        setSuggestions([]);
+      }
+      setLoadingSuggestions(false);
+    };
+    if (product) fetchSuggestions();
+  }, [product, id]);
+
   // Handle Add to Cart
   const handleAddToCart = async () => {
     setAdding(true);
@@ -71,13 +104,11 @@ export default function ProductDetail() {
     setSuccessMsg('');
 
     const currUser = auth.currentUser;
-
     if (!currUser) {
       setError('⚠ Please login to add items to the cart.');
       setAdding(false);
       return;
     }
-
     if (product.sizes?.length > 0 && !selectedSize) {
       setError('⚠ Please select a size before adding to cart.');
       setAdding(false);
@@ -91,7 +122,7 @@ export default function ProductDetail() {
       const image =
         Array.isArray(product.images) && product.images.length > 0
           ? product.images[0]
-          : product.image ;
+          : product.image;
 
       const price =
         typeof product.finalPrice !== 'undefined' && product.finalPrice !== null
@@ -111,8 +142,6 @@ export default function ProductDetail() {
         const userData = userSnap.data();
         const cart = userData.cart || [];
         const index = cart.findIndex((item) => item.id === id && item.size === selectedSize);
-
-
         if (index !== -1) {
           cart[index].quantity += 1;
           await updateDoc(userRef, { cart });
@@ -128,7 +157,6 @@ export default function ProductDetail() {
           cart: [cartItem],
         });
       }
-
       setSuccessMsg('✅ Product added to cart!');
     } catch (err) {
       console.error('Cart error:', err);
@@ -149,19 +177,15 @@ export default function ProductDetail() {
       setReviewError('Please login to submit a review.');
       return;
     }
-
     if (!reviewText.trim()) {
       setReviewError('Review text is required.');
       return;
     }
-
     if (reviewRating < 1 || reviewRating > 5) {
       setReviewError('Rating between 1 to 5 is required.');
       return;
     }
-
     setReviewSubmitting(true);
-
     try {
       const reviewObj = {
         uid: user.uid,
@@ -182,7 +206,6 @@ export default function ProductDetail() {
     } catch (err) {
       setReviewError('Failed to submit review.');
     }
-
     setReviewSubmitting(false);
   };
 
@@ -196,7 +219,6 @@ export default function ProductDetail() {
       if (!productSnap.exists()) return;
 
       const currentReviews = productSnap.data().reviews || [];
-
       const updatedReviews = currentReviews.filter(
         (rev) => rev.createdAt !== createdAt || rev.uid !== user.uid
       );
@@ -211,80 +233,106 @@ export default function ProductDetail() {
     }
   };
 
-
   if (error) {
     return <div className="text-center text-red-500 py-10">{error}</div>;
   }
 
   if (!product) {
-    return <Loader/>
+    return <Loader />;
   }
 
   const productImage =
     Array.isArray(product.images) && product.images.length > 0
       ? product.images[0]
-      : product.image ;
+      : product.image;
 
   const displayPrice =
     product.finalPrice !== undefined && product.finalPrice !== null
       ? product.finalPrice
       : product.price;
 
+  // SUGGESTION CARD COMPONENT (inline)
+  function SuggestionCard({ item }) {
+    return (
+      <Link
+        to={`/product/${item.id}`}
+        className="min-w-[180px] max-w-[180px] bg-white border border-gray-100 shadow rounded-lg hover:shadow-lg transition block overflow-hidden"
+      >
+        <img
+          src={(Array.isArray(item.images) && item.images[0]) || item.image}
+          alt={item.title}
+          className="w-full h-36 object-cover"
+        />
+        <div className="p-2">
+          <div className="font-semibold truncate text-sm">{item.title}</div>
+          <div className="text-black font-bold text-base">₹{item.finalPrice ?? item.price}</div>
+          {item.discountPercent ? (
+            <span className="text-green-600 text-xs font-medium px-2 rounded bg-green-50 mt-1 inline-block">
+              {item.discountPercent}% off
+            </span>
+          ) : null}
+        </div>
+      </Link>
+    );
+  }
+
   return (
     <section className="py-10 px-4 max-w-6xl mx-auto">
       <div className="grid md:grid-cols-2 gap-10 bg-white p-6 shadow rounded-lg mb-10">
-        {/* Image & Rating */}
+        {/* ... IMAGE, RATING, MAIN PRODUCT DETAILS CODE ... (unchanged) */}
+        {/* ... size picker, add to cart button, admin edit, etc ... */}
+        {/* ... (all your existing code until after the reviews section) ... */}
+
         <div>
-          {/* 🖼 Multi-Image Viewer with Dot Indicators */}
-{Array.isArray(product.images) && product.images.length > 0 ? (
-  <div className="relative">
-    <img
-      src={product.images[currentImageIndex]}
-      alt={product.title}
-      className="w-full h-96 object-cover rounded transition-all duration-300"
-    />
-{/* Optional ←/→ Arrows */}
-{product.images.length > 1 && (
-  <>
-    <button
-      onClick={() => setCurrentImageIndex((prev) => (prev === 0 ? product.images.length - 1 : prev - 1))}
-      className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white rounded-full p-2 hover:bg-black"
-    >
-      ‹
-    </button>
-    <button
-      onClick={() => setCurrentImageIndex((prev) => (prev + 1) % product.images.length)}
-      className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white rounded-full p-2 hover:bg-black"
-    >
-      ›
-    </button>
-  </>
-)}
+          {/* ... IMAGE, RATING ... */}
+          {Array.isArray(product.images) && product.images.length > 0 ? (
+            <div className="relative">
+              <img
+                src={product.images[currentImageIndex]}
+                alt={product.title}
+                className="w-full h-96 object-cover rounded transition-all duration-300"
+              />
+              {/* Optional ←/→ Arrows */}
+              {product.images.length > 1 && (
+                <>
+                  <button
+                    onClick={() => setCurrentImageIndex((prev) => (prev === 0 ? product.images.length - 1 : prev - 1))}
+                    className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white rounded-full p-2 hover:bg-black"
+                  >
+                    ‹
+                  </button>
+                  <button
+                    onClick={() => setCurrentImageIndex((prev) => (prev + 1) % product.images.length)}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white rounded-full p-2 hover:bg-black"
+                  >
+                    ›
+                  </button>
+                </>
+              )}
 
-
-    {/* 🔵 Dot Indicators */}
-    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-      {product.images.map((_, index) => (
-        <button
-          key={index}
-          onClick={() => setCurrentImageIndex(index)}
-          className={`w-3 h-3 rounded-full transition-all duration-200 ${
-            currentImageIndex === index
-              ? "bg-black"
-              : "bg-gray-300 hover:bg-gray-500"
-          }`}
-          aria-label={`View image ${index + 1}`}
-        />
-      ))}
-    </div>
-  </div>
-) : (
-  <img
-    src={product.image}
-    alt={product.title}
-    className="w-full h-96 object-cover rounded"
-  />
-)}
+              {/* 🔵 Dot Indicators */}
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                {product.images.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentImageIndex(index)}
+                    className={`w-3 h-3 rounded-full transition-all duration-200 ${
+                      currentImageIndex === index
+                        ? "bg-black"
+                        : "bg-gray-300 hover:bg-gray-500"
+                    }`}
+                    aria-label={`View image ${index + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : (
+            <img
+              src={product.image}
+              alt={product.title}
+              className="w-full h-96 object-cover rounded"
+            />
+          )}
 
           {product.rating?.rate && (
             <div className="mt-4 flex items-center gap-3">
@@ -305,7 +353,9 @@ export default function ProductDetail() {
               {product.originalPrice && product.discountPercent && (
                 <>
                   <span className="line-through text-gray-400">₹{product.originalPrice}</span>
-                  <span className="text-green-600 font-medium">{product.discountPercent}% off</span>
+                  <span className="text-green-600 font-medium">
+                    {product.discountPercent}% off
+                  </span>
                 </>
               )}
             </div>
@@ -315,35 +365,32 @@ export default function ProductDetail() {
             )}
 
             {product.sizes && product.sizes.length > 0 && (
-  <div className="mb-4">
-    <label className="block text-sm font-medium text-gray-700 mb-1">Select Size:</label>
-    <div className="flex flex-wrap gap-2">
-      {product.sizes.map((size) => (
-        <button
-          key={size}
-          type="button"
-          onClick={() => {
-            setSelectedSize(size);
-            if (error) setError(""); // clear error on pick
-          }}
-          className={`px-4 py-2 border rounded ${
-            selectedSize === size
-              ? 'bg-black text-white border-black'
-              : 'bg-white text-gray-800 border-gray-300'
-          } hover:border-black transition`}
-        >
-          {size}
-        </button>
-      ))}
-    </div>
-    {/* Show red warning directly below sizes if size not selected */}
-    {error === '⚠ Please select a size before adding to cart.' && (
-      <p className="text-red-600 text-xs mt-1">{error}</p>
-    )}
-  </div>
-)}
-
-
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Select Size:</label>
+                <div className="flex flex-wrap gap-2">
+                  {product.sizes.map((size) => (
+                    <button
+                      key={size}
+                      type="button"
+                      onClick={() => {
+                        setSelectedSize(size);
+                        if (error) setError("");
+                      }}
+                      className={`px-4 py-2 border rounded ${
+                        selectedSize === size
+                          ? 'bg-black text-white border-black'
+                          : 'bg-white text-gray-800 border-gray-300'
+                      } hover:border-black transition`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+                {error === '⚠ Please select a size before adding to cart.' && (
+                  <p className="text-red-600 text-xs mt-1">{error}</p>
+                )}
+              </div>
+            )}
 
             {product.description && (
               <p className="text-gray-700 mt-4">{product.description}</p>
@@ -472,7 +519,22 @@ export default function ProductDetail() {
               ))}
           </ul>
         )}
-        
+      </div>
+
+      {/* --------- PRODUCT SUGGESTION SECTION ---------- */}
+      <div className="mt-10">
+        <h2 className="text-xl font-bold mb-4">You may also like</h2>
+        {loadingSuggestions ? (
+          <Loader small />
+        ) : suggestions.length === 0 ? (
+          <p className="text-gray-400">No suggestions found.</p>
+        ) : (
+          <div className="flex space-x-4 overflow-x-auto scrollbar-thin pb-2">
+            {suggestions.map((item) => (
+              <SuggestionCard key={item.id} item={item} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
