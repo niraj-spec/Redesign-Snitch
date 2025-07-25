@@ -210,22 +210,19 @@ const Navbar = () => {
               )}
             </div>
 
-            {/* Add Music Play Button on right side */}
+            {/* Right icons */}
+            <div className="flex space-x-4 items-center"> 
+              {/* Add Music Play Button on right side */}
             <div className="flex items-center space-x-3 ml-4">
               <button
-  onClick={togglePlay}
-  className="p-2 rounded-md flex items-center space-x-2"
-  title={user ? (isPlaying ? 'Pause Music' : 'Play Music') : 'Login to play music'}
->
-  {isPlaying ? <FaPause size={20} /> : <FaPlay size={20} />}
-</button>
-
-
+                onClick={togglePlay}
+                className="p-2 rounded-md flex items-center space-x-2"
+                title={user ? (isPlaying ? 'Pause Music' : 'Play Music') : 'Login to play music'}
+              >
+                {isPlaying ? <FaPause size={20} /> : <FaPlay size={20} />}
+              </button>
             </div>
-
-
-            {/* Right icons */}
-            <div className="flex space-x-4 items-center">
+            
               <button onClick={() => setShowMessages(!showMessages)} className="text-gray-700 hover:text-black p-2">
                 <FaCommentAlt className="w-5 h-5" />
               </button>
@@ -298,8 +295,8 @@ const Navbar = () => {
         >
           <div className="px-4 pt-2 pb-4 space-y-2">
             <Link to="/" className="block text-gray-700 hover:text-black">HOME</Link>
-            <Link to="/product" className="block text-gray-700 hover:text-black">SHOP</Link>
             <Link to="/about" className="block text-gray-700 hover:text-black">ABOUT</Link>
+            <Link to="/product" className="block text-gray-700 hover:text-black">SHOP</Link>
             <Link to="/studio" className="block text-gray-700 hover:text-black">STUDIO</Link>
             <Link to="/order" className="block text-gray-700 hover:text-black">YOUR ORDER</Link>
 

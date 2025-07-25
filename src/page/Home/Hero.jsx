@@ -63,7 +63,7 @@ const HeroSection = () => {
                     <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={() => navigate('/products')}
+                        onClick={() => navigate('/product')}
                         className="bg-black text-white px-8 py-3 text-sm font-medium tracking-wide hover:bg-gray-800 transition-colors duration-200"
                     >
                         SHOP NEW ARRIVALS

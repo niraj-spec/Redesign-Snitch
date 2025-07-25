@@ -20,7 +20,7 @@ const Footer = () => {
             <ul>
               <li>
                 <a
-                  href="#"
+                  href="/product"
                   className="transition text-gray-300 hover:text-[#21e672] hover:pl-2 duration-300 block"
                 >
                   New Arrivals
@@ -28,26 +28,26 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/about"
                   className="transition text-gray-300 hover:text-[#21e672] hover:pl-2 duration-300 block"
                 >
-                  Best Sellers
+                  About
                 </a>
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/contact"
                   className="transition text-gray-300 hover:text-[#21e672] hover:pl-2 duration-300 block"
                 >
-                  Clothing
+                  Studio
                 </a>
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/order"
                   className="transition text-gray-300 hover:text-[#21e672] hover:pl-2 duration-300 block"
                 >
-                  Accessories
+                  Your Order
                 </a>
               </li>
             </ul>
@@ -58,7 +58,7 @@ const Footer = () => {
             <ul>
               <li>
                 <a
-                  href="#"
+                  href="/"
                   className="transition text-gray-300 hover:text-[#21e672] hover:pl-2 duration-300 block"
                 >
                   FAQs
@@ -82,7 +82,7 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/contact"
                   className="transition text-gray-300 hover:text-[#21e672] hover:pl-2 duration-300 block"
                 >
                   Support

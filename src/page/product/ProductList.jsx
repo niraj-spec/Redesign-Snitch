@@ -232,8 +232,7 @@ const ProductList = () => {
                             <img
                               src={
                                 // Show second image on desktop hover or on mobile active
-                                (activeCard === product.id && secondImage) ? secondImage : firstImage || "/placeholder.png"
-                              }
+                                (activeCard === product.id && secondImage) ? secondImage : firstImage}
                               alt={product.title}
                               className="absolute w-full h-full object-cover transition-opacity duration-300"
                             />
