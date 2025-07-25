@@ -44,7 +44,7 @@ README.md            # Project documentation
 
 | Home Page                        | Product List                      |
 |![IMG_20250725_214256](https://github.com/user-attachments/assets/d61592c5-a5ea-4d5b-bd21-e8d9d1f2efc6)|
-------![Uploading IMG_20250725_214235.jpg…]()
+![Uploading IMG_20250725_214235.jpg…]()
 |
 |  |  |
 
