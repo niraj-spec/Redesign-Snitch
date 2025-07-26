@@ -1,6 +1,8 @@
 # Redesign-Snitch
 
 A modern, responsive redesign of the Snitch men's fashion e-commerce site, built with ReactJS and Tailwind CSS. This project focuses on clean user experience, modular architecture, and micro-interactions suitable for web and mobile devices.
+For trying admin panel { admin: admin@niraj.com
+, password: 123456}
 
 ## 🚀 Demo
 
